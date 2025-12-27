@@ -1,4 +1,3 @@
-# personelkay-t
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import json
@@ -23,7 +22,7 @@ def resource_path(relative_path):
 class PersonelSistemiGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Personel Kayıt Sistemi")
+        self.root.title("mustafaozkanbulut.org")
         self.root.geometry("1200x700")
         self.root.minsize(1000, 600)
         
@@ -74,7 +73,6 @@ class PersonelSistemiGUI:
         left_container.grid(row=0, column=0, padx=20, pady=20, sticky="ns")
 
         # Tıklanabilir Blog Linki
-        # pady=(10, 25) ile üstten 10px, alttan 25px boşluk bırakarak formdan uzaklaştırdık
         link_label = tk.Label(
             left_container, 
             text="mustafaozkanbulut.org", 
@@ -197,6 +195,7 @@ class PersonelSistemiGUI:
                 messagebox.showerror("Hata", f"Excel hatası: {e}")
 
     def alfanumerik_ve_bosluk_mu(self, metin):
+        """Metnin harf, rakam ve boşluk içerip içermediğini kontrol eder (Türkçe karakterler dahil)."""
         return all(char.isalnum() or char == " " for char in metin)
 
     def personel_ekle(self):
@@ -209,25 +208,25 @@ class PersonelSistemiGUI:
 
         # Ad Soyad Doğrulaması (Zorunlu ve Alfanumerik)
         if not data["ad_soyad"]:
-            messagebox.showwarning("Hata", "Ad Soyad alanı boş bırakıalamaz!")
+            messagebox.showwarning("Hata", "Ad Soyad alanı boş bırakılamaz!")
             return
         
         if not self.alfanumerik_ve_bosluk_mu(data["ad_soyad"]):
             messagebox.showwarning("Hata", "Ad Soyad sadece harf, rakam ve boşluk içerebilir!")
             return
 
-        # Görevi, Adres, Tel doğrulamaları
+        # Görevi Doğrulaması (Alfanumerik)
         if data["gorevi"] and not self.alfanumerik_ve_bosluk_mu(data["gorevi"]):
             messagebox.showwarning("Hata", "Görevi alanı sadece harf, rakam ve boşluk içerebilir!")
             return
 
-        if data["adres"] and not self.alfanumerik_ve_bosluk_mu(data["adres"]):
-            messagebox.showwarning("Hata", "Adres alanı sadece harf, rakam ve boşluk içerebilir!")
-            return
-
+        # Telefon numarası kontrolü: Sadece rakam ve boşluklara izin ver
         if data["tel"] and not all(char.isdigit() or char == " " for char in data["tel"]):
             messagebox.showwarning("Hata", "Telefon sadece rakam ve boşluk içerebilir!")
             return
+
+        # Adres kontrolü: İsteğiniz üzerine adres alanında işaretlemelere (noktalama) izin verildi.
+        # Bu nedenle alfanumerik kontrolü adres alanından kaldırıldı.
 
         # Kayıt İşlemi
         existing_index = next((i for i, p in enumerate(self.personeller) if p["tc"] == data["tc"]), None)
