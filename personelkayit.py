@@ -14,6 +14,7 @@ def resource_path(relative_path):
     yollarını bulmasını sağlayan yardımcı fonksiyon.
     """
     try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
@@ -225,9 +226,6 @@ class PersonelSistemiGUI:
             messagebox.showwarning("Hata", "Telefon sadece rakam ve boşluk içerebilir!")
             return
 
-        # Adres kontrolü: İsteğiniz üzerine adres alanında işaretlemelere (noktalama) izin verildi.
-        # Bu nedenle alfanumerik kontrolü adres alanından kaldırıldı.
-
         # Kayıt İşlemi
         existing_index = next((i for i, p in enumerate(self.personeller) if p["tc"] == data["tc"]), None)
         if existing_index is not None:
@@ -239,6 +237,7 @@ class PersonelSistemiGUI:
 
         self.verileri_kaydet()
         self.listeyi_guncelle()
+        # Kayıt başarılıysa formu temizle ve odaklan
         self.formu_temizle()
         messagebox.showinfo("Başarılı", "İşlem başarıyla tamamlandı.")
 
@@ -282,8 +281,12 @@ class PersonelSistemiGUI:
                 self.formu_temizle()
 
     def formu_temizle(self):
+        """Tüm giriş kutularını temizler ve odağı ilk kutuya getirir."""
         for entry in self.entries.values():
             entry.delete(0, tk.END)
+        # İmleci tekrar en üstteki TC alanına getirelim
+        if "tc" in self.entries:
+            self.entries["tc"].focus_set()
 
 if __name__ == "__main__":
     root = tk.Tk()
